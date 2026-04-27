@@ -18,6 +18,7 @@ public class PlateformSpawn : MonoBehaviour
             {
                 var plat = Instantiate(plateformToSpawn.gameObject);
                 plat.transform.position = transform.position + Vector3.one * 1;
+                plateformToSpawn = null;
                 
             }
         }

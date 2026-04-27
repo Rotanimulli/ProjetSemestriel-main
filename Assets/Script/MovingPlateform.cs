@@ -6,7 +6,18 @@ public class MovingPlatform : Plateform
 {
     public float speed;
     public Rigidbody2D rb;
+    public float lifeTime = 0f;
 
+    private void Start()
+    {
+        StartCoroutine(DestroyAfterTime());
+    }
+
+    private IEnumerator DestroyAfterTime()
+    {
+        yield return new WaitForSeconds(lifeTime);
+        Destroy(gameObject);
+    }
     private void OnTriggerStay2D(Collider2D other)
     {
         if (other.tag == "Player")
