@@ -6,9 +6,11 @@ public class Death : MonoBehaviour
 
 {
 
-    Vector2 startPosition;
+    Vector2 CheckPointPosition;
 
     Rigidbody2D playerRb;
+
+    [SerializeField] private Animator Cory;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
@@ -24,7 +26,7 @@ public class Death : MonoBehaviour
 
     {
 
-        startPosition = transform.position;
+        CheckPointPosition = transform.position;
 
     }
 
@@ -37,30 +39,38 @@ public class Death : MonoBehaviour
         {
 
             Die();
-
+           
+            
         }
 
+    }
+
+    public void updateCheckPoint(Vector2 pos)
+    {
+        CheckPointPosition = pos;
     }
 
     void Die()
 
     {
+        Cory.SetBool("IsDead", true);
         StartCoroutine(Respawn(0.5f));
+        
     }
 
     IEnumerator Respawn(float duration)
 
     {
-
         playerRb.simulated = false;
         playerRb.linearVelocity = new Vector2(0, 0);
-        transform.localScale = new Vector3(0, 0, 0);
         yield return new WaitForSeconds(duration);
-        transform.position = startPosition;
-        transform.localScale = new Vector3(1, 1, 1);
+        transform.position = CheckPointPosition;
         playerRb.simulated = true;
+        Cory.SetBool("IsDead", false);
 
     }
+
+   
 
 }
 

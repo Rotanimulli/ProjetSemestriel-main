@@ -13,11 +13,16 @@ public class CharMovement : MonoBehaviour
     public Transform myTransform;
     public bool isOnWall;
     public float lastDir;
+    [SerializeField] private Animator Cory;
+
+    private Vector3 originalScale;
 
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        originalScale = myTransform.localScale;
+        print(originalScale);   
     }
 
     void Update()
@@ -32,12 +37,20 @@ public class CharMovement : MonoBehaviour
             }
         }
 
+   
+        
+
+        if ((Input.GetKeyDown(KeyCode.Space)))
+        {
+            Cory.SetTrigger("jumpAction");
+        }
+
 
         if (CheckBooster())
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                vDirection += 20;
+                vDirection += 10;
             }
         }
 
@@ -60,16 +73,24 @@ public class CharMovement : MonoBehaviour
 
         if (Input.GetKey(KeyCode.LeftArrow)) //mouvements gauche/droite
         {
-            lastDir = -1;
-            myTransform.position = myTransform.position - new Vector3(speed, 0, 0);
+            WalkLeft();
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            lastDir = 1;
-            myTransform.position = myTransform.position + new Vector3(speed, 0, 0);
+           WalkRight();
+        }
+        print(myTransform.localScale);
+        if ((Input.GetKey(KeyCode.LeftArrow)) | Input.GetKey(KeyCode.RightArrow))
+        {
+            Cory.SetBool("isMoving", true);
+        }
+        else
+        {
+            Cory.SetBool("isMoving", false);
         }
 
-        rb.linearVelocityY += vDirection; //gere une partie du saut
+
+            rb.linearVelocityY += vDirection; //gere une partie du saut
 
         if (isOnWall)
         {
@@ -79,23 +100,40 @@ public class CharMovement : MonoBehaviour
             if (Input.GetKey(KeyCode.UpArrow))
             {
                 rb.linearVelocityY = 2;
+                Cory.SetBool("isClimbing", true);
             }
         }
         else
         {
             rb.gravityScale = 1;
+            Cory.SetBool("isClimbing", false);
         }
     }
 
+    private void WalkRight()
+    {
+        lastDir = 1;
+        myTransform.position = myTransform.position + new Vector3(speed, 0, 0);
+        myTransform.localScale = originalScale;
+    }
 
+    private void WalkLeft()
+    {
+        lastDir = -1;
+        myTransform.position = myTransform.position - new Vector3(speed, 0, 0);
+        myTransform.localScale = new Vector3(myTransform.localScale.x * -1, myTransform.localScale.y, myTransform.localScale.z);
+        myTransform.localScale = new Vector3(originalScale.x*-1, originalScale.y, originalScale.z); 
+    }
 
     public bool CheckGround() //empeche de spamm saut
     {
-        var rayCastHit = Physics2D.Raycast(transform.position, new Vector2(0, -1), 1.1f, groundmask);
+        var rayCastHit = Physics2D.Raycast(transform.position, new Vector2(0, -1), 0.2f, groundmask);
         if (rayCastHit)
         {
+            Cory.SetBool("isOnGround", true);
             return true;
         }
+        Cory.SetBool("isOnGround", false);
         return false;
     }
 
@@ -131,7 +169,7 @@ public class CharMovement : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
-        Gizmos.DrawRay(transform.position, Vector3.down * 1.1f);
+        Gizmos.DrawRay(transform.position, Vector3.down * 0.2f);
     }
 }
 
