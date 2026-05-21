@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.InputSystem.Android.LowLevel;
+
 
 public class Checkpoint : MonoBehaviour
 {
@@ -17,7 +17,7 @@ public class Checkpoint : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            gameController.updateCheckPoint(transform.position);
+            //gameController.updateCheckPoint(transform.position);
             spriteRenderer.sprite = active;
         }
     }

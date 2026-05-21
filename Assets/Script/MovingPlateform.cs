@@ -27,10 +27,13 @@ public class MovingPlatform : Plateform
             other.gameObject.transform.SetParent(transform);
         }
     }
-    private void OnTriggerExit2D(Collider2D other)
+    private void OnTriggerExit2D(Collider2D other) 
     {
         if (other.tag == "Player")
-            other.gameObject.transform.SetParent(null);
+        {
+           other.gameObject.transform.SetParent(null);
+
+        }
     }
     void Update()
     {

@@ -19,7 +19,7 @@ public class PlateformSpawn : MonoBehaviour
             {
                 Cory.SetTrigger("spawnPlatformAction");
                 var plat = Instantiate(plateformToSpawn.gameObject);
-                plat.transform.position = transform.position + Vector3.one * 1;
+                plat.transform.position = transform.position + Vector3.right * Mathf.Sign(transform.localScale.x) + Vector3.up;
                 plateformToSpawn = null;
                 
             }

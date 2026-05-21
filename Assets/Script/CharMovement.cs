@@ -4,12 +4,13 @@ using UnityEngine;
 public class CharMovement : MonoBehaviour
 {
     public Rigidbody2D rb; //Ne pas oublier d'activer la gravity scale du rigidbody et d'ajouter un collider
-    public float speed = 1;
-    public float jumpforce = 1;
+    public float speed = 1f;
+    public float jumpforce = 1f;
     public LayerMask groundmask; //Quels layer seront affecté par le raycast attention a ne pas ajouter le layer de votre perso sinon le raycast va trouver le perso avant de trouver le sol
     public LayerMask boostermask;
     public LayerMask leftgrabablemask;
     public LayerMask rightgrabablemask;
+    public LayerMask grabablemask;
     public Transform myTransform;
     public bool isOnWall;
     public float lastDir;
@@ -25,34 +26,38 @@ public class CharMovement : MonoBehaviour
         print(originalScale);   
     }
 
+
+
     void Update()
     {
-
+        
         var vDirection = 0f;
-        if (CheckGround())
+
+        if (CheckBooster())
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                
+                vDirection += 6f;
+            }
+        }
+
+
+        if (CheckGround() | CheckBooster() | CheckGrabableWall())
         {
             if (Input.GetKeyDown(KeyCode.Space)) //gere le saut
             {
                 vDirection += jumpforce;
+
+                rb.linearVelocityY += vDirection; //gere une partie du saut
             }
         }
-
-   
-        
 
         if ((Input.GetKeyDown(KeyCode.Space)))
         {
             Cory.SetTrigger("jumpAction");
         }
 
-
-        if (CheckBooster())
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                vDirection += 10;
-            }
-        }
 
         if (CheckLeftGrabableWall() || CheckRightGrabableWall()) //pour sauter du mur, mais ne fonctionne pas
         {
@@ -65,6 +70,7 @@ public class CharMovement : MonoBehaviour
         if (CheckLeftGrabableWall() || CheckRightGrabableWall()) //le grab d'un mur vers la droite fonctionne, pas vers la gauche
         {
             isOnWall = true;
+            
         }
         else
         {
@@ -90,7 +96,6 @@ public class CharMovement : MonoBehaviour
         }
 
 
-            rb.linearVelocityY += vDirection; //gere une partie du saut
 
         if (isOnWall)
         {
@@ -101,6 +106,7 @@ public class CharMovement : MonoBehaviour
             {
                 rb.linearVelocityY = 2;
                 Cory.SetBool("isClimbing", true);
+                
             }
         }
         else
@@ -127,7 +133,7 @@ public class CharMovement : MonoBehaviour
 
     public bool CheckGround() //empeche de spamm saut
     {
-        var rayCastHit = Physics2D.Raycast(transform.position, new Vector2(0, -1), 0.2f, groundmask);
+        var rayCastHit = Physics2D.Raycast(transform.position, new Vector2(0, -1), 1f, groundmask);
         if (rayCastHit)
         {
             Cory.SetBool("isOnGround", true);
@@ -166,10 +172,20 @@ public class CharMovement : MonoBehaviour
         }
         return false;
     }
+
+    public bool CheckGrabableWall()
+    {
+        var rayCastHit = Physics2D.Raycast(transform.position, new Vector2(0, -1), 1f, grabablemask);
+        if (rayCastHit)
+        {
+            return true;
+        }
+        return false;
+    }
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
-        Gizmos.DrawRay(transform.position, Vector3.down * 0.2f);
+        Gizmos.DrawRay(transform.position, Vector3.down * 0.5f);
     }
 }
 

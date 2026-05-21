@@ -5,7 +5,19 @@ public class CinematiqueManager : MonoBehaviour
 {
    public static CinematiqueManager instance;
     private int counter;
-    
+
+
+    private void Awake()
+    {
+        if(instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     [SerializeField]
     int pyloneNb;

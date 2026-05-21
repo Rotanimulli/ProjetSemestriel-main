@@ -1,6 +1,7 @@
 using System.Collections;
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Death : MonoBehaviour
 
@@ -9,7 +10,7 @@ public class Death : MonoBehaviour
     Vector2 CheckPointPosition;
 
     Rigidbody2D playerRb;
-
+    public GameObject DeathParticle;
     [SerializeField] private Animator Cory;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -26,7 +27,7 @@ public class Death : MonoBehaviour
 
     {
 
-        CheckPointPosition = transform.position;
+        //CheckPointPosition = transform.position;
 
     }
 
@@ -37,7 +38,7 @@ public class Death : MonoBehaviour
         if (collision.CompareTag("Obstacle"))
 
         {
-
+            
             Die();
            
             
@@ -45,27 +46,30 @@ public class Death : MonoBehaviour
 
     }
 
-    public void updateCheckPoint(Vector2 pos)
-    {
-        CheckPointPosition = pos;
-    }
+    //public void updateCheckPoint(Vector2 pos)
+   // {
+        //CheckPointPosition = pos;
+    //}
 
     void Die()
 
     {
+        gameObject.transform.SetParent(null);
+
+        Instantiate(DeathParticle, transform.position, Quaternion.identity);
+
         Cory.SetBool("IsDead", true);
-        StartCoroutine(Respawn(0.5f));
+        
+        StartCoroutine(Respawn(1f));
         
     }
 
     IEnumerator Respawn(float duration)
 
     {
-        playerRb.simulated = false;
-        playerRb.linearVelocity = new Vector2(0, 0);
+       
         yield return new WaitForSeconds(duration);
-        transform.position = CheckPointPosition;
-        playerRb.simulated = true;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         Cory.SetBool("IsDead", false);
 
     }
